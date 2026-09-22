@@ -103,6 +103,26 @@ export async function getMyOrders(req, res, next) {
     }
 }
 
+// @desc    Get all orders (Seller/Admin)
+// @route   GET /api/v1/orders
+// @access  Private (Seller/Admin)
+export async function getAllOrders(req, res, next) {
+    try {
+        const orders = await Order.find()
+            .populate("user", "name email")
+            .populate("products.product", "title price image")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: orders.length,
+            data: orders,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 // @desc    Get single order by ID
 // @route   GET /api/v1/orders/:id
 // @access  Private
